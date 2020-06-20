@@ -1,0 +1,65 @@
+Imports: {
+import static gate.Utils.*;
+}
+Phase: Contact
+Input: Token Lookup 
+Options: control = appelt debug = false
+MACRO: CONJUNCTION(
+ ({Token.kind==punctuation}|{Token.category==CC}|{Token.category==IN}|{Token.category==TO})*
+)
+MACRO: CONTACT (
+({Lookup.minorType==contact})*
+)
+MACRO: NUMBER(
+({Token.string == "+"})?({Token.kind == number})[1,15]({Token.string == "-"})?({Token.kind == number})*({Token.string == "-"})?({Token.kind == number})*
+)
+Rule: ContactRule
+(
+(CONTACT CONJUNCTION (NUMBER):number)
+)
+:ContactFinder
+-->
+:ContactFinder{
+String Number="";
+AnnotationSet number = bindings.get("number");
+for(Annotation bet : number.inDocumentOrder()){
+	Number+=stringFor(doc,bet);
+}
+
+FeatureMap features=Factory.newFeatureMap();
+String text="";
+String texts="";
+AnnotationSet ProfileSection = inputAS.get("ProfileSection");
+AnnotationSet ProfileSection2 = inputAS.get("profile_section");
+
+
+
+
+if(ProfileSection2.size() > 0){
+  ProfileSection=ProfileSection2;
+}
+
+
+ 
+if(ContactFinderAnnots.firstNode().getOffset()>=ProfileSection.firstNode().getOffset() && ContactFinderAnnots.lastNode().getOffset()<=ProfileSection.lastNode().getOffset()){
+  	for(Annotation set : ContactFinderAnnots.inDocumentOrder()){
+
+if(set.getFeatures().containsKey("minorType")){
+	 		String MinorType=set.getFeatures().get("minorType").toString();
+		 	if(MinorType.equals("contact")){
+		 	if (Number.length()>=8){
+	features.put("Contact_No",Number);
+}
+		 		
+		 	}
+	 	}
+	 	}
+    outputAS.add(ContactFinderAnnots.firstNode(),ContactFinderAnnots.lastNode(),"Contact_Number",features);
+
+    }
+    
+  
+
+
+
+}

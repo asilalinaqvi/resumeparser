@@ -1,0 +1,42 @@
+Phase: EmailFinder
+Input: Token SpaceToken
+Options: control = appelt
+Macro: WORD_OR_NUMBER
+(
+({Token.kind == word}|{Token.kind == number})
+)
+Rule: emailaddress
+Priority: 50
+(
+(WORD_OR_NUMBER)+
+(({Token.string == "."} | {Token.string == "_"} | {Token.string == "-"})(WORD_OR_NUMBER)+)*
+{Token.string == "@"}
+(WORD_OR_NUMBER)+
+({Token.string == "."}(WORD_OR_NUMBER)+)*
+)
+:emailLookup -->
+:emailLookup{
+	FeatureMap features=Factory.newFeatureMap();
+String text=" ";
+AnnotationSet ProfileSection = inputAS.get("ProfileSection");
+AnnotationSet ProfileSection2 = inputAS.get("profile_section");
+
+if(ProfileSection2.size() > 0){
+  ProfileSection=ProfileSection2;
+}
+if(emailLookupAnnots.firstNode().getOffset()>=ProfileSection.firstNode().getOffset() && emailLookupAnnots.lastNode().getOffset()<=ProfileSection.lastNode().getOffset()){
+  	for(Annotation set : emailLookupAnnots.inDocumentOrder()){
+
+  				text+=set.getFeatures().get("string").toString();
+		 		features.put("Email",text);
+		 
+	 	}
+    outputAS.add(emailLookupAnnots.firstNode(),emailLookupAnnots.lastNode(),"EmailFinder",features);
+
+    }
+    
+  
+
+
+
+}

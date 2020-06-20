@@ -1,0 +1,53 @@
+Imports: {
+import static gate.Utils.*;
+}
+Phase: MaritalStatus
+Input: Token Lookup 
+Options: control = appelt debug = false
+MACRO: CONJUNCTION(
+ ({Token.kind==punctuation}|{Token.category==CC}|{Token.category==IN}|{Token.category==TO})*
+)
+MACRO: MARITAL (
+(({Token.string == "Marital"}{Token.string == "Status"}) | {Token.string == "Marital"}{Token.string == "status"})
+)
+Rule: MaritalStatusRule
+(
+(MARITAL CONJUNCTION {Lookup.minorType==marital})
+)
+:MaritalStatusFinder
+-->
+:MaritalStatusFinder{
+FeatureMap features=Factory.newFeatureMap();
+String text="";
+String texts="";
+AnnotationSet ProfileSection = inputAS.get("ProfileSection");
+AnnotationSet ProfileSection2 = inputAS.get("profile_section");
+
+
+
+
+if(ProfileSection2.size() > 0){
+  ProfileSection=ProfileSection2;
+}
+
+
+ 
+if(MaritalStatusFinderAnnots.firstNode().getOffset()>=ProfileSection.firstNode().getOffset() && MaritalStatusFinderAnnots.lastNode().getOffset()<=ProfileSection.lastNode().getOffset()){
+  	for(Annotation set : MaritalStatusFinderAnnots.inDocumentOrder()){
+
+if(set.getFeatures().containsKey("minorType")){
+	 		String MinorType=set.getFeatures().get("minorType").toString();
+		 	if(MinorType.equals("marital")){
+		 		features.put("Marital_Status",stringFor(doc,set));
+		 	}
+	 	}
+	 	}
+    outputAS.add(MaritalStatusFinderAnnots.firstNode(),MaritalStatusFinderAnnots.lastNode(),"Marital_Status",features);
+
+    }
+    
+  
+
+
+
+}

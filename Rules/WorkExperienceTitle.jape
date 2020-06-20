@@ -1,0 +1,198 @@
+Imports: {
+import static gate.Utils.*;
+}
+Phase: WorkExperienceTitle
+Input: Lookup Token Date work_experience 
+Options: control = appelt debug = false
+
+MACRO: CONJUNCTION(
+ ({Token.kind==punctuation}|{Token.category==CC}|{Token.category==IN}|{Token.category==TO})*
+)
+
+MACRO: ARTICLE(
+ ({Token.category==DT})
+)
+MACRO: DATE(
+({Date}(CONJUNCTION)(({Date})? | ({Token.string == "Present"})? | ({Token.string == "Progress"})? | ({Token.string == "Current"})?))
+)
+MACRO: TIME(
+({Token.category==CD} (CONJUNCTION) ({Token.string == "Month"} | {Token.string == "[Mm]onth(?s)"})?))
+
+MACRO:ORG
+({Lookup.majorType == organisation,Token.orth!=lowercase} | {Lookup.majorType == org_base,Token.orth!=lowercase} | {Lookup.majorType == organization,Token.orth!=lowercase})
+MACRO:JOB
+({Lookup.majorType==jobtitle,Token.orth!=lowercase} )
+MACRO: NNP
+((
+ (
+ {Token.category==NN,Token.orth!=lowercase} | {Token.category==NNP,Token.orth!=lowercase} | {Token.category==NP,Token.orth!=lowercase} |{Token.category==NNS,Token.orth!=lowercase} | ORG | JOB 
+ )*
+ CONJUNCTION
+ (
+ {Token.category==NN,Token.orth!=lowercase} | {Token.category==NNP,Token.orth!=lowercase} | {Token.category==NP,Token.orth!=lowercase} |{Token.category==NNS,Token.orth!=lowercase} | ORG | JOB
+ )*
+ )
+ (
+ {Token.category==JJ,Token.orth!=lowercase} | {Token.category==JJR,Token.orth!=lowercase} | {Token.category==JJS,Token.orth!=lowercase}
+ )?
+ )
+Rule:ExperienceTitle1 
+Priority: 3 
+
+(JOB CONJUNCTION ORG ({Token,Token.orth!=lowercase})[0,4] (DATE)):Title
+-->
+:Title{
+
+	FeatureMap feature=Factory.newFeatureMap();
+	 	boolean dateDone = false;
+	AnnotationSet work_experience = inputAS.get("work_experience");
+if(TitleAnnots.firstNode().getOffset()>work_experience.firstNode().getOffset() && TitleAnnots.lastNode().getOffset()<=work_experience.lastNode().getOffset()){
+
+	for(Annotation set : TitleAnnots.inDocumentOrder()){
+		if(set.getType()=="Date"){
+		String datePeriod = "";
+			if(!dateDone){
+				dateDone = true;
+				datePeriod = "date_start";
+			}
+			else{
+				datePeriod = "date_end";
+			}
+	 		feature.put(datePeriod,stringFor(doc,set));
+	 	}
+
+	 	if(set.getFeatures().containsKey("majorType")){
+	 		String MajorType=set.getFeatures().get("majorType").toString();
+		 	if(MajorType.equals("jobtitle")){
+		 		feature.put("Job_Title",stringFor(doc,set));
+		 	}
+	 	}
+	 	if(set.getFeatures().containsKey("majorType")){
+	 		String MajorType=set.getFeatures().get("majorType").toString();
+		 	if(MajorType.equals("organisation") | MajorType.equals("org_base") | MajorType.equals("organization")){
+		 		feature.put("Works_at",stringFor(doc,set));
+		 	}
+	 	}
+	 }
+outputAS.add(TitleAnnots.firstNode(),TitleAnnots.lastNode(),"Work_Experience_Titles",feature);
+	 }
+
+}
+
+Rule:ExperienceTitle2
+Priority: 2 
+
+(
+
+(JOB CONJUNCTION ORG ({Token,Token.orth!=lowercase})[0,4] (DATE)? )|
+(ORG (CONJUNCTION) (JOB)? ({Token,Token.orth!=lowercase})[0,4] (DATE) )|
+(ORG (CONJUNCTION) (JOB)? (DATE) ) |
+(DATE JOB CONJUNCTION (ORG)? ) |
+(ARTICLE NNP ORG (CONJUNCTION) (JOB)? (DATE) )|
+((DATE)? JOB CONJUNCTION ORG )
+
+):Title
+-->
+:Title{
+	AnnotationSet section = bindings.get("Title");
+
+	FeatureMap feature=Factory.newFeatureMap();
+	 	boolean dateDone = false;
+	AnnotationSet work_experience = inputAS.get("work_experience");
+	try
+        {
+if(TitleAnnots.firstNode().getOffset()>work_experience.firstNode().getOffset() && TitleAnnots.lastNode().getOffset()<=work_experience.lastNode().getOffset()){
+
+	for(Annotation set : TitleAnnots.inDocumentOrder()){
+		if(set.getType()=="Date"){
+		String datePeriod = "";
+			if(!dateDone){
+				dateDone = true;
+				datePeriod = "date_start";
+			}
+			else{
+				datePeriod = "date_end";
+			}
+	 		feature.put(datePeriod,stringFor(doc,set));
+	 	}
+
+	 	if(set.getFeatures().containsKey("majorType")){
+	 		String MajorType=set.getFeatures().get("majorType").toString();
+		 	if(MajorType.equals("jobtitle")){
+		 		feature.put("Job_Title",stringFor(doc,set));
+		 	}
+	 	}
+	 	if(set.getFeatures().containsKey("majorType")){
+	 		String MajorType=set.getFeatures().get("majorType").toString();
+		 	if(MajorType.equals("organisation") | MajorType.equals("org_base") | MajorType.equals("organization")){
+		 		feature.put("Works_at",stringFor(doc,set));
+		 	}
+	 	}
+	 }
+
+outputAS.add(TitleAnnots.firstNode(),TitleAnnots.lastNode(),"Work_Experience_Titles_2",feature);
+
+	 }
+}
+        catch(NullPointerException e)
+        {
+            System.out.print("NullPointerException caught");
+        }
+}
+
+Rule:ExperienceTitle3
+Priority: 1 
+
+(
+
+(ARTICLE NNP JOB CONJUNCTION ORG NNP ({Token,Token.orth!=lowercase})[0,4] (DATE)? )|
+(ARTICLE NNP ORG (CONJUNCTION) (NNP JOB NNP)? ({Token,Token.orth!=lowercase})[0,4] (DATE) )|
+(ARTICLE NNP ORG (CONJUNCTION) (NNP JOB NNP)? (DATE) ) |
+(ARTICLE NNP ORG (CONJUNCTION) (NNP JOB NNP)? (DATE) ) |
+(ORG (NNP) CONJUNCTION JOB CONJUNCTION NNP CONJUNCTION DATE)|
+(DATE NNP JOB CONJUNCTION NNP ORG )
+
+):Title
+-->
+:Title{
+
+	FeatureMap feature=Factory.newFeatureMap();
+	 	boolean dateDone = false;
+	AnnotationSet work_experience = inputAS.get("work_experience");
+	try
+        {
+if(TitleAnnots.firstNode().getOffset()>work_experience.firstNode().getOffset() && TitleAnnots.lastNode().getOffset()<=work_experience.lastNode().getOffset()){
+
+	for(Annotation set : TitleAnnots.inDocumentOrder()){
+		if(set.getType()=="Date"){
+		String datePeriod = "";
+			if(!dateDone){
+				dateDone = true;
+				datePeriod = "date_start";
+			}
+			else{
+				datePeriod = "date_end";
+			}
+	 		feature.put(datePeriod,stringFor(doc,set));
+	 	}
+
+	 	if(set.getFeatures().containsKey("majorType")){
+	 		String MajorType=set.getFeatures().get("majorType").toString();
+		 	if(MajorType.equals("jobtitle")){
+		 		feature.put("Job_Title",stringFor(doc,set));
+		 	}
+	 	}
+	 	if(set.getFeatures().containsKey("majorType")){
+	 		String MajorType=set.getFeatures().get("majorType").toString();
+		 	if(MajorType.equals("organisation") | MajorType.equals("org_base") | MajorType.equals("organization")){
+		 		feature.put("Works_at",stringFor(doc,set));
+		 	}
+	 	}
+	 }
+outputAS.add(TitleAnnots.firstNode(),TitleAnnots.lastNode(),"Work_Experience_Titles_3",feature);
+	 }
+}catch(NullPointerException e)
+        {
+            System.out.print("NullPointerException caught");
+        }
+}

@@ -1,0 +1,54 @@
+Imports: {
+import static gate.Utils.*;
+}
+Phase: AddressFinder
+Input: Sentence Token Lookup 
+Options: control = appelt debug = false
+
+Rule: AddressRule
+(
+({Sentence contains {Lookup.minorType==address}})
+)
+:AddressFinder
+-->
+:AddressFinder{
+FeatureMap features=Factory.newFeatureMap();
+String text="";
+String texts="";
+AnnotationSet ProfileSection = inputAS.get("ProfileSection");
+AnnotationSet ProfileSection2 = inputAS.get("profile_section");
+AnnotationSet Tokens = inputAS.get("Token");
+
+
+
+
+if(ProfileSection2.size() > 0){
+  ProfileSection=ProfileSection2;
+}
+
+
+ 
+if(AddressFinderAnnots.firstNode().getOffset()>=ProfileSection.firstNode().getOffset() && AddressFinderAnnots.lastNode().getOffset()<=ProfileSection.lastNode().getOffset()){
+      for(Annotation set : AddressFinderAnnots.inDocumentOrder()){
+      for(Annotation pet: Tokens.inDocumentOrder()){
+if(pet.getStartNode().getOffset()>=set.getStartNode().getOffset() && pet.getEndNode().getOffset()<=set.getEndNode().getOffset()){
+    
+        text+=stringFor(doc,pet)+" ";
+}
+}
+if(text.length()<=140 && text.length()>=10){
+  features.put("Address",text);
+}
+
+text="";
+}       
+   
+    outputAS.add(AddressFinderAnnots.firstNode(),AddressFinderAnnots.lastNode(),"Address_Profile",features);
+
+    }
+    
+  
+
+
+
+}

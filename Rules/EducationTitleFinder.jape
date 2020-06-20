@@ -1,0 +1,195 @@
+Imports: {
+import static gate.Utils.*;
+}
+Phase: EducationTitleFinder 
+Input: Lookup Token Date education_and_training
+Options: control = appelt debug = false
+MACRO: CONJUNCTION(
+ ({Token.kind==punctuation}|{Token.category==CC}|{Token.category==IN}|{Token.category==TO})*
+)
+MACRO: DATE(
+({Date}(CONJUNCTION)(({Date})? | ({Token.string == "Present"})? | ({Token.string == "Progress"})? | ({Token.string == "Current"})?))
+)
+MACRO: TIME(
+({Token.category==CD} (CONJUNCTION) ({Token.string == "Month"} | {Token.string == "[Mm]onth(?s)"})?))
+
+MACRO: NNP
+((
+ (
+ {Token.category==NN,Token.orth!=lowercase} | {Token.category==NNP,Token.orth!=lowercase} | {Token.category==NP,Token.orth!=lowercase} |{Token.category==NNS,Token.orth!=lowercase} 
+ )*
+ CONJUNCTION
+ (
+ {Token.category==NN,Token.orth!=lowercase} | {Token.category==NNP,Token.orth!=lowercase} | {Token.category==NP,Token.orth!=lowercase} |{Token.category==NNS,Token.orth!=lowercase} 
+ )*
+ )
+ (
+ {Token.category==JJ,Token.orth!=lowercase} | {Token.category==JJR,Token.orth!=lowercase} | {Token.category==JJS,Token.orth!=lowercase}
+ )?
+ )
+MACRO:LOOKUP_TITLE
+(({Lookup.minorType == degree_titles,Token.orth!=lowercase}))
+
+MACRO:DISCIPLINE
+(({Lookup.minorType == discipline}))
+
+MACRO:INSTITUTE_ONTOLOGY
+(({Lookup.minorType == educationalinstitutes,Token.orth!=lowercase}) | ({Lookup.majorType == organisation,Token.orth!=lowercase}))
+MACRO:INSTITUTE_LOOKUP
+(({Lookup.majorType == org_base,Token.orth!=lowercase} | NNP)?)
+
+
+
+Rule:EducationTitle1
+Priority:10 
+	(
+	
+
+(DISCIPLINE CONJUNCTION LOOKUP_TITLE CONJUNCTION DATE INSTITUTE_ONTOLOGY ) |
+(LOOKUP_TITLE CONJUNCTION DISCIPLINE CONJUNCTION DATE INSTITUTE_ONTOLOGY ) |
+(LOOKUP_TITLE CONJUNCTION DISCIPLINE CONJUNCTION INSTITUTE_ONTOLOGY CONJUNCTION NNP CONJUNCTION DATE) |
+(LOOKUP_TITLE CONJUNCTION DISCIPLINE CONJUNCTION NNP CONJUNCTION INSTITUTE_ONTOLOGY CONJUNCTION NNP CONJUNCTION DATE) |
+(DISCIPLINE CONJUNCTION LOOKUP_TITLE CONJUNCTION INSTITUTE_ONTOLOGY NNP CONJUNCTION DATE) |
+(DISCIPLINE CONJUNCTION LOOKUP_TITLE CONJUNCTION DATE INSTITUTE_ONTOLOGY ) |
+(DISCIPLINE DATE CONJUNCTION LOOKUP_TITLE INSTITUTE_ONTOLOGY  ) |
+(INSTITUTE_ONTOLOGY NNP CONJUNCTION LOOKUP_TITLE CONJUNCTION DISCIPLINE CONJUNCTION DATE) |
+(INSTITUTE_ONTOLOGY NNP CONJUNCTION LOOKUP_TITLE CONJUNCTION DATE DISCIPLINE ) |
+(INSTITUTE_ONTOLOGY NNP DATE CONJUNCTION LOOKUP_TITLE CONJUNCTION DISCIPLINE ) |
+((INSTITUTE_ONTOLOGY)? CONJUNCTION NNP CONJUNCTION DATE CONJUNCTION LOOKUP_TITLE CONJUNCTION DISCIPLINE ) 
+(DATE LOOKUP_TITLE CONJUNCTION DISCIPLINE CONJUNCTION INSTITUTE_ONTOLOGY) |
+(DATE DISCIPLINE CONJUNCTION LOOKUP_TITLE CONJUNCTION INSTITUTE_ONTOLOGY  ) |
+(DATE DISCIPLINE CONJUNCTION LOOKUP_TITLE INSTITUTE_ONTOLOGY ) |
+(DATE LOOKUP_TITLE CONJUNCTION DISCIPLINE CONJUNCTION NNP CONJUNCTION INSTITUTE_ONTOLOGY  ) |
+(DATE LOOKUP_TITLE CONJUNCTION DISCIPLINE NNP CONJUNCTION INSTITUTE_ONTOLOGY ) |
+(DATE LOOKUP_TITLE CONJUNCTION INSTITUTE_ONTOLOGY NNP CONJUNCTION DISCIPLINE CONJUNCTION ) |
+(DATE CONJUNCTION INSTITUTE_ONTOLOGY NNP CONJUNCTION LOOKUP_TITLE CONJUNCTION DISCIPLINE  ) 
+):degreeTitle
+	  -->
+	
+	 :degreeTitle{
+	 	FeatureMap feature=Factory.newFeatureMap();
+	 	boolean dateDone = false;
+	AnnotationSet education_and_training = inputAS.get("education_and_training");
+	try
+        {
+if(degreeTitleAnnots.firstNode().getOffset()>education_and_training.firstNode().getOffset() && degreeTitleAnnots.lastNode().getOffset()<=education_and_training.lastNode().getOffset()){
+
+	for(Annotation set : degreeTitleAnnots.inDocumentOrder()){
+		if(set.getType()=="Date"){
+		String datePeriod = "";
+			if(!dateDone){
+				dateDone = true;
+				datePeriod = "date_start";
+			}
+			else{
+				datePeriod = "date_end";
+			}
+	 		feature.put(datePeriod,stringFor(doc,set));
+	 	}
+
+		if(set.getFeatures().containsKey("minorType")){
+	 		String MinorType=set.getFeatures().get("minorType").toString();
+		 	if(MinorType.equals("degree_titles")){
+		 		feature.put("Degree_Type",stringFor(doc,set));
+		 	}
+	 	}
+	 	
+	 	if(set.getFeatures().containsKey("minorType")){
+		 	String discipline=set.getFeatures().get("minorType").toString();
+		 	if(discipline.equals("discipline")){
+		 		feature.put("Degree_In",stringFor(doc,set));
+		 	}
+	 	}
+
+	 	if(set.getFeatures().containsKey("majorType")){
+		 	String educationalinstitutes=set.getFeatures().get("majorType").toString();
+		 	if(educationalinstitutes.equals("organisation") | educationalinstitutes.equals("organization")){
+		 		feature.put("Degree_From",stringFor(doc,set));
+		 	}
+	 	}
+
+	 	}
+	 		 	outputAS.add(degreeTitleAnnots.firstNode(),degreeTitleAnnots.lastNode(),"DegreeTitles",feature);
+
+}}
+        catch(NullPointerException e)
+        {
+            System.out.print("NullPointerException caught");
+        }
+}
+	 	
+Rule:EducationTitle2
+Priority:8 
+	(
+
+(INSTITUTE_ONTOLOGY NNP CONJUNCTION LOOKUP_TITLE CONJUNCTION (DISCIPLINE)? DATE) |
+(INSTITUTE_ONTOLOGY NNP CONJUNCTION LOOKUP_TITLE CONJUNCTION (DISCIPLINE)? (DATE)?) |
+(LOOKUP_TITLE CONJUNCTION (DISCIPLINE)? (CONJUNCTION)? DATE INSTITUTE_ONTOLOGY)|
+(LOOKUP_TITLE CONJUNCTION (DISCIPLINE)? (CONJUNCTION)? INSTITUTE_ONTOLOGY CONJUNCTION (DATE)?) |
+(DISCIPLINE (DATE)? CONJUNCTION (TIME CONJUNCTION)?  (LOOKUP_TITLE)? INSTITUTE_ONTOLOGY) |
+(DISCIPLINE (DATE)? CONJUNCTION (TIME CONJUNCTION)?  (LOOKUP_TITLE) (INSTITUTE_ONTOLOGY)?) |
+(DISCIPLINE CONJUNCTION (TIME CONJUNCTION)?  (LOOKUP_TITLE) (INSTITUTE_ONTOLOGY)? (DATE)?) |
+(DISCIPLINE NNP CONJUNCTION (TIME)? CONJUNCTION (LOOKUP_TITLE)? INSTITUTE_ONTOLOGY (DATE)?) |
+(DISCIPLINE CONJUNCTION (TIME)? CONJUNCTION (LOOKUP_TITLE)? INSTITUTE_ONTOLOGY (DATE)?) |
+((DATE) CONJUNCTION (TIME CONJUNCTION)? INSTITUTE_ONTOLOGY  CONJUNCTION (LOOKUP_TITLE) (DISCIPLINE)?) |
+(DATE NNP CONJUNCTION LOOKUP_TITLE CONJUNCTION NNP CONJUNCTION (DISCIPLINE CONJUNCTION)?  INSTITUTE_ONTOLOGY) |
+(DATE LOOKUP_TITLE CONJUNCTION NNP (DISCIPLINE CONJUNCTION)? INSTITUTE_ONTOLOGY) |
+(DATE DISCIPLINE CONJUNCTION NNP INSTITUTE_ONTOLOGY (CONJUNCTION) (LOOKUP_TITLE)?) |
+((LOOKUP_TITLE)? CONJUNCTION DISCIPLINE CONJUNCTION (DATE)? CONJUNCTION (TIME)? CONJUNCTION  INSTITUTE_ONTOLOGY)
+):degreeTitle
+	  -->
+	
+	 :degreeTitle{
+	 	FeatureMap feature=Factory.newFeatureMap();
+	 	boolean dateDone = false;
+	AnnotationSet education_and_training = inputAS.get("education_and_training");
+	try
+        {
+if(degreeTitleAnnots.firstNode().getOffset()>education_and_training.firstNode().getOffset() && degreeTitleAnnots.lastNode().getOffset()<=education_and_training.lastNode().getOffset()){
+
+	for(Annotation set : degreeTitleAnnots.inDocumentOrder()){
+		if(set.getType()=="Date"){
+		String datePeriod = "";
+			if(!dateDone){
+				dateDone = true;
+				datePeriod = "date_start";
+			}
+			else{
+				datePeriod = "date_end";
+			}
+	 		feature.put(datePeriod,stringFor(doc,set));
+	 	}
+
+		if(set.getFeatures().containsKey("minorType")){
+	 		String MinorType=set.getFeatures().get("minorType").toString();
+		 	if(MinorType.equals("degree_titles")){
+		 		feature.put("Degree_Type",stringFor(doc,set));
+		 	}
+	 	}
+	 	
+	 	if(set.getFeatures().containsKey("minorType")){
+		 	String discipline=set.getFeatures().get("minorType").toString();
+		 	if(discipline.equals("discipline")){
+		 		feature.put("Degree_In",stringFor(doc,set));
+		 	}
+	 	}
+
+	 	if(set.getFeatures().containsKey("majorType")){
+		 	String educationalinstitutes=set.getFeatures().get("majorType").toString();
+		 	if(educationalinstitutes.equals("organisation")){
+		 		feature.put("Degree_From",stringFor(doc,set));
+		 	}
+	 	}
+
+	 	}
+	 		 	outputAS.add(degreeTitleAnnots.firstNode(),degreeTitleAnnots.lastNode(),"DegreeTitles_2",feature);
+
+}}
+        catch(NullPointerException e)
+        {
+            System.out.print("NullPointerException caught");
+        }
+}
+	 	
+
+

@@ -1,0 +1,50 @@
+Imports: {
+import static gate.Utils.*;
+}
+Phase: NationalityFinder
+Input: Token Lookup 
+Options: control = appelt debug = false
+MACRO: CONJUNCTION(
+ ({Token.kind==punctuation}|{Token.category==CC}|{Token.category==IN}|{Token.category==TO})*
+)
+Rule: NationalityRule
+(
+({Token.string == "Nationality"} CONJUNCTION {Lookup.minorType==nationality})
+)
+:NationalityFinder
+-->
+:NationalityFinder{
+FeatureMap features=Factory.newFeatureMap();
+String text="";
+String texts="";
+AnnotationSet ProfileSection = inputAS.get("ProfileSection");
+AnnotationSet ProfileSection2 = inputAS.get("profile_section");
+
+
+
+
+if(ProfileSection2.size() > 0){
+  ProfileSection=ProfileSection2;
+}
+
+
+ 
+if(NationalityFinderAnnots.firstNode().getOffset()>=ProfileSection.firstNode().getOffset() && NationalityFinderAnnots.lastNode().getOffset()<=ProfileSection.lastNode().getOffset()){
+  	for(Annotation set : NationalityFinderAnnots.inDocumentOrder()){
+
+if(set.getFeatures().containsKey("minorType")){
+	 		String MinorType=set.getFeatures().get("minorType").toString();
+		 	if(MinorType.equals("nationality")){
+		 		features.put("Nationality",stringFor(doc,set));
+		 	}
+	 	}
+	 	}
+    outputAS.add(NationalityFinderAnnots.firstNode(),NationalityFinderAnnots.lastNode(),"Nationality",features);
+
+    }
+    
+  
+
+
+
+}

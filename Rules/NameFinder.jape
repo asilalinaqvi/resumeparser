@@ -1,0 +1,59 @@
+Imports: {
+import static gate.Utils.*;
+}
+Phase: NameFinder
+Input: Sentence Token Lookup 
+Options: control = appelt debug = false
+
+Rule: NameRule
+(
+({Lookup.majorType==person,Token.orth!=lowercase})({Lookup.majorType==person,Token.orth!=lowercase})+
+)
+:NameFinder
+-->
+:NameFinder{
+FeatureMap feature=Factory.newFeatureMap();
+FeatureMap features=Factory.newFeatureMap();
+String text="";
+String texts="";
+AnnotationSet ProfileSection = inputAS.get("ProfileSection");
+AnnotationSet ProfileSection2 = inputAS.get("profile_section");
+
+
+
+
+if(ProfileSection2.size() > 0){
+	ProfileSection=ProfileSection2;
+}
+
+
+ 
+if(NameFinderAnnots.firstNode().getOffset()>=ProfileSection.firstNode().getOffset() && NameFinderAnnots.lastNode().getOffset()<=ProfileSection.lastNode().getOffset()){
+	if( doc.getFeatures().containsKey("Annot")){
+		for (Annotation t:NameFinderAnnots.inDocumentOrder()){
+			if(t.getFeatures().get("string") != null){
+				text+=t.getFeatures().get("string")+" ";
+			}
+	 	}
+	    feature.put("Father_Name", text);
+		outputAS.add(NameFinderAnnots.firstNode(),NameFinderAnnots.lastNode(),"Father_Name",feature);
+		doc.getFeatures().remove("Annot");
+		}
+		else{
+for (Annotation d:NameFinderAnnots.inDocumentOrder()){
+			if(d.getFeatures().get("string") != null){
+			texts+=d.getFeatures().get("string")+" ";
+		}
+ }   
+ 		features.put("Name", texts);
+
+		outputAS.add(NameFinderAnnots.firstNode(),NameFinderAnnots.lastNode(),"Name",features);
+		doc.getFeatures().put("Annot",NameFinderAnnots.lastNode());
+
+		}
+		
+
+
+
+}
+}

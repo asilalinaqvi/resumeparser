@@ -1,0 +1,234 @@
+{% load staticfiles %}
+{% load filter %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Post a job position or create your online resume by TheJobs!">
+    <meta name="keywords" content="">
+
+    <title>TheJobs - Resume list</title>
+
+    <!-- Styles -->
+    <link href="{{ MEDIA_URL }}assets/css/app.min.css" rel="stylesheet">
+    <link href="{{ MEDIA_URL }}assets/css/custom.css" rel="stylesheet">
+
+    <!-- Fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Raleway:100,300,400,500,600,800%7COpen+Sans:300,400,500,600,700,800%7CMontserrat:400,700' rel='stylesheet' type='text/css'>
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" href="{{ MEDIA_URL }}assets/img/favicon.ico">
+  </head>
+
+  <body class="nav-on-header smart-nav bg-alt">
+
+    <!-- Navigation bar -->
+    <nav class="navbar">
+      <div class="container">
+
+        <!-- Logo -->
+        <div class="pull-left">
+          <a class="navbar-toggle" href="#" data-toggle="offcanvas"><i class="ti-menu"></i></a>
+
+          <div class="logo-wrapper">
+            <a class="logo" href="index.html"><img src="{{ MEDIA_URL }}assets/img/logo.png" alt="logo"></a>
+            <a class="logo-alt" href="index.html"><img src="{{ MEDIA_URL }}assets/img/logo-alt.png" alt="logo-alt"></a>
+          </div>
+
+        </div>
+        <!-- END Logo -->
+
+        <!-- User account -->
+        
+        <!-- END User account -->
+
+        <!-- Navigation menu -->
+        <ul class="nav-menu">
+          <li>
+            <a class="active" href="{% url 'index' %}">Home</a>
+            
+          </li>
+          <li>
+            <a href="{% url 'parsed' %}">Parse Resume</a>
+            
+          </li>
+          <li>
+            <a href="{% url 'parsed_result' %}">Parsed Results</a>
+            
+          </li>
+          <li>
+            <a href="#">Company</a>
+            
+          </li>
+          <li>
+            <a href="#">About</a>
+            
+          </li>
+        </ul>
+        <!-- END Navigation menu -->
+
+      </div>
+    </nav>
+    <!-- END Navigation bar -->
+
+    <!-- Page header -->
+    <header class="page-header bg-img" style="background-image: url({{ MEDIA_URL }}assets/img/bg-banner1.jpg);">
+      
+
+
+    </header>
+    <!-- END Page header -->
+
+
+    <!-- Main container -->
+    <main>
+      <section class="no-padding-top bg-alt">
+        <div class="container">
+          
+          {% for doc in returnedData %}
+            <!-- Resume detail -->
+            <div class="col-sm-12 col-md-6">
+              <a class="item-block" href="{% url 'show' doc.id %}">
+                <header>
+                  {% if doc.image_url %}
+                        <img class="resume-avatar" src="{{ doc.image_url}}" alt="">
+
+            {% else %}
+                        <img class="resume-avatar" src="{{ MEDIA_URL }}assets/img/avatar-1.jpg" alt="">
+
+            {% endif %}
+                 
+                  <div class="hgroup">
+                    <h4>{{doc.profile.name|title}}</h4>
+                  <h5>{{doc.experience.exp.job_title|title}}</h5>
+                  </div>
+                </header>
+    
+                <div class="item-body">
+                  <p>{{doc.summary.0.objective|title}}</p>
+
+                  
+                </div>
+
+                <footer>
+                  <ul class="details cols-2">
+                    
+
+
+
+              <li>
+                <i class="fa fa-phone"></i>
+                <span>{{doc.profile.contact_no}}</span>
+              </li>
+
+              <li>
+                <i class="fa fa-envelope"></i>
+                {{doc.profile.email}}
+              </li>
+
+              <li>
+                <i class="fa fa-flag"></i>
+                <span>{{doc.profile.nationality}}</span>
+              </li>
+
+              <li>
+                <i class="fa fa-map-marker"></i>
+                <span>{{doc.location}}</span>
+              </li>
+
+              <li>
+                <i class="fa fa-calendar"></i>
+                <span>{{doc.profile.dob}}</span>
+              </li>
+              
+                  </ul>
+                </footer>
+              </a>
+            </div>
+            <!-- END Resume detail -->
+
+            {% endfor %}
+            
+
+
+            <!-- END Resume detail -->
+          
+
+          
+
+
+        </div>
+        <div class="row"> 
+         <div class="container">  
+          <!-- Page navigation -->
+          <nav class="text-center">
+            <ul class="pagination">
+              <li>
+                <a href="#" aria-label="Previous">
+                  <i class="ti-angle-left"></i>
+                </a>
+              </li>
+              <li><a href="#">1</a></li>
+              <li class="active"><a href="#">2</a></li>
+              <li><a href="#">3</a></li>
+              <li><a href="#">4</a></li>
+              <li>
+                <a href="#" aria-label="Next">
+                  <i class="ti-angle-right"></i>
+                </a>
+              </li>
+            </ul>
+          </nav>
+          <!-- END Page navigation -->
+        </div>
+</div>
+      </section>
+    </main>
+    <!-- END Main container -->
+
+
+   <footer class="site-footer">
+
+      <!-- Top section -->
+      
+      <!-- END Top section -->
+
+      <!-- Bottom section -->
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 col-sm-6 col-xs-12">
+            <p class="copyright-text">Copyrights &copy; 2017 All Rights Reserved by <a href="#">The Human Resource Consultants</a>.</p>
+          </div>
+
+          <div class="col-md-4 col-sm-6 col-xs-12">
+            <ul class="social-icons">
+              <li><a class="facebook" href="#"><i class="fa fa-facebook"></i></a></li>
+              <li><a class="twitter" href="#"><i class="fa fa-twitter"></i></a></li>
+              <li><a class="dribbble" href="#"><i class="fa fa-dribbble"></i></a></li>
+              <li><a class="linkedin" href="#"><i class="fa fa-linkedin"></i></a></li>
+              <li><a class="instagram" href="#"><i class="fa fa-instagram"></i></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- END Bottom section -->
+
+    </footer>
+    <!-- END Site footer -->
+
+
+    <!-- Back to top button -->
+    <a id="scroll-up" href="#"><i class="ti-angle-up"></i></a>
+    <!-- END Back to top button -->
+
+    <!-- Scripts -->
+    <script src="{{ MEDIA_URL }}assets/js/app.min.js"></script>
+    <script src="{{ MEDIA_URL }}assets/vendors/summernote/summernote.min.js"></script>
+    <script src="{{ MEDIA_URL }}assets/js/custom.js"></script>
+
+  </body>
+</html>

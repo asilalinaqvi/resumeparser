@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Post a job position or create your online resume by TheJobs!">
+    <meta name="keywords" content="">
+
+    <title>TheJobs - Add resume</title>
+    <link href="{{ MEDIA_URL }}assets/css/materialize.min.css" rel="stylesheet">
+
+    <!-- Styles -->
+    <link href="{{ MEDIA_URL }}assets/css/app.min.css" rel="stylesheet">
+    <link href="{{ MEDIA_URL }}assets/vendors/summernote/summernote.css" rel="stylesheet">
+    <link href="{{ MEDIA_URL }}assets/css/custom.css" rel="stylesheet">
+
+    <!-- Fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Oswald:100,300,400,500,600,800%7COpen+Sans:300,400,500,600,700,800%7CMontserrat:400,700' rel='stylesheet' type='text/css'>
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" href="{{ MEDIA_URL }}assets/img/favicon.ico">
+  </head>
+
+  <body class="nav-on-header smart-nav">
+
+    <!-- Navigation bar -->
+    <nav class="navbar">
+      <div class="container">
+
+        <!-- Logo -->
+        <div class="pull-left">
+          <a class="navbar-toggle" href="#" data-toggle="offcanvas"><i class="ti-menu"></i></a>
+
+          <div class="logo-wrapper">
+            <a class="logo" href="index.html"><img src="{{ MEDIA_URL }}assets/img/logo.png" alt="logo"></a>
+            <a class="logo-alt" href="index.html"><img src="{{ MEDIA_URL }}assets/img/logo-alt.png" alt="logo-alt"></a>
+          </div>
+
+        </div>
+        <!-- END Logo -->
+
+        <!-- User account -->
+        
+        <!-- END User account -->
+
+        <!-- Navigation menu -->
+        <ul class="nav-menu">
+          <li>
+            <a class="active" href="{% url 'index' %}">Home</a>
+            
+          </li>
+          <li>
+            <a href="{% url 'parsed' %}">Parse Resume</a>
+            
+          </li>
+          <li>
+            <a href="{% url 'parsed_result' %}">Parsed Results</a>
+            
+          </li>
+          <li>
+            <a href="#">Company</a>
+            
+          </li>
+          <li>
+            <a href="#">About</a>
+            
+          </li>
+        </ul>
+        <!-- END Navigation menu -->
+
+      </div>
+    </nav>
+    <!-- END Navigation bar -->
+
+    <form method="post" enctype="multipart/form-data" id="form">
+    {% csrf_token %}
+
+      <!-- Page header -->
+      <header class="page-header">
+        <div class="container page-name">
+          <h1 class="text-center">Extract your resume</h1>
+          <p class="lead text-center">Create your resume and put it online.</p>
+        </div>
+
+        
+
+          <div class="button-group">
+            <div class="action-buttons">
+
+              <div class="upload-button">
+                <button class="btn btn-block btn-gray">Choose a resume file</button>
+                <input type="file" name="myfile">
+              </div>
+
+              <div class="upload-button">
+                <button class="dis btn btn-block btn-primary disabled" onclick="window.location.href='{% url 'parsed_result' %}'" type="button">View CV</button>                
+              </div>
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+      </header>
+
+      <p id="message" ></p>
+<div class="progress">
+      <div class="definite"></div>
+  </div>
+      <main>
+
+        <section class=" bg-img" style="background-image: url({{ MEDIA_URL }}assets/img/bg-facts.jpg);">
+          <div class="container">
+            <header class="section-header">
+              <span>Are you done?</span>
+              <h2>Submit resume</h2>
+              
+            </header>
+
+            <p class="text-center"><button type="submit" class="btn btn-success btn-xl btn-round">Extractify</button></p>
+
+          </div>
+        </section>
+        <!-- END Submit -->
+
+
+      </main>
+      <!-- END Main container -->
+
+    </form>
+
+    <!-- Site footer -->
+    <footer class="site-footer">
+
+      <!-- Top section -->
+      
+      <!-- END Top section -->
+
+      <!-- Bottom section -->
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 col-sm-6 col-xs-12">
+            <p class="copyright-text">Copyrights &copy; 2017 All Rights Reserved by <a href="#">The Human Resource Consultants</a>.</p>
+          </div>
+
+          <div class="col-md-4 col-sm-6 col-xs-12">
+            <ul class="social-icons">
+              <li><a class="facebook" href="#"><i class="fa fa-facebook"></i></a></li>
+              <li><a class="twitter" href="#"><i class="fa fa-twitter"></i></a></li>
+              <li><a class="dribbble" href="#"><i class="fa fa-dribbble"></i></a></li>
+              <li><a class="linkedin" href="#"><i class="fa fa-linkedin"></i></a></li>
+              <li><a class="instagram" href="#"><i class="fa fa-instagram"></i></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- END Bottom section -->
+
+    </footer>
+    <!-- END Site footer -->
+
+
+    <!-- Back to top button -->
+    <a id="scroll-up" href="#"><i class="ti-angle-up"></i></a>
+    <!-- END Back to top button -->
+
+    <!-- Scripts -->
+
+    <script src="{{ MEDIA_URL }}assets/js/jquery-3.1.1.js"></script>
+    <script src="{{ MEDIA_URL }}assets/vendors/summernote/summernote.min.js"></script>
+    <script src="{{ MEDIA_URL }}assets/js/materialize.min.js"></script> 
+
+    <script src="{{ MEDIA_URL }}assets/js/custom.js"></script> 
+    <script>
+    function upload(event) {
+event.preventDefault();
+var data = new FormData($('form').get(0));
+$('.definite').addClass('indeterminate');
+$("#message").html('<center>You can rectify information once the extraction finishes before submitting it in database</center>');
+$.ajax({
+
+
+
+
+
+	
+    url: $(this).attr('action'),
+    type: $(this).attr('method'),
+    data: data,
+    cache: false,
+    processData: false,
+    contentType: false,
+
+    success: function(data) {
+    	$('.definite').removeClass('indeterminate');
+    	$('.dis').removeClass('disabled');
+        alert('success');
+    }
+});
+return false;
+}
+
+$(function() {
+    $('form').submit(upload);
+});</script>
+  </body>
+</html>

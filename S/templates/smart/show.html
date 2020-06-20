@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Post a job position or create your online resume by TheJobs!">
+    <meta name="keywords" content="">
+
+    <title>TheJobs - Resume detail</title>
+
+    <!-- Styles -->
+    <link href="{{ MEDIA_URL }}assets/css/app.min.css" rel="stylesheet">
+    <link href="{{ MEDIA_URL }}assets/css/custom.css" rel="stylesheet">
+
+    <!-- Fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Oswald:100,300,400,500,600,800%7COpen+Sans:300,400,500,600,700,800%7CMontserrat:400,700' rel='stylesheet' type='text/css'>
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" href="{{ MEDIA_URL }}assets/img/favicon.ico">
+  </head>
+
+  <body class="nav-on-header smart-nav">
+
+    <!-- Navigation bar -->
+    <nav class="navbar">
+      <div class="container">
+
+        <!-- Logo -->
+        <div class="pull-left">
+          <a class="navbar-toggle" href="#" data-toggle="offcanvas"><i class="ti-menu"></i></a>
+
+          <div class="logo-wrapper">
+            <a class="logo" href="index.html"><img src="{{ MEDIA_URL }}assets/img/logo.png" alt="logo"></a>
+            <a class="logo-alt" href="index.html"><img src="{{ MEDIA_URL }}assets/img/logo-alt.png" alt="logo-alt"></a>
+          </div>
+
+        </div>
+        <!-- END Logo -->
+
+        <!-- User account -->
+        
+        <!-- END User account -->
+
+        <!-- Navigation menu -->
+        <ul class="nav-menu">
+          <li>
+            <a class="active" href="{% url 'index' %}">Home</a>
+            
+          </li>
+          <li>
+            <a href="{% url 'parsed' %}">Parse Resume</a>
+            
+          </li>
+          <li>
+            <a href="{% url 'parsed_result' %}">Parsed Results</a>
+            
+          </li>
+          <li>
+            <a href="#">Company</a>
+            
+          </li>
+          <li>
+            <a href="#">About</a>
+            
+          </li>
+        </ul>
+        <!-- END Navigation menu -->
+
+      </div>
+    </nav>
+    <!-- END Navigation bar -->
+
+
+    <!-- Page header -->
+    <header class="page-header bg-img" style="background-image: url({{ MEDIA_URL }}assets/img/bg-banner1.jpg)">
+      <div class="container">
+        <div class="row">
+          <div class="col-xs-12 col-sm-4">
+            {% if returnedData.image_url %}
+                        <img src="{{ returnedData.image_url}}" alt="">
+
+            {% else %}
+                        <img src="{{ MEDIA_URL }}assets/img/avatar.jpg" alt="">
+
+            {% endif %}
+          </div>
+
+          <div class="col-xs-12 col-sm-8 header-detail">
+            <div class="hgroup">
+              <h1>{{returnedData.profile.name|title}}</h1>
+              <h3>{{doc.experience.exp.job_title|title}}</h3>
+            </div>
+            <hr>
+            <p class="lead">
+              {{returnedData.summary|title}}
+              
+
+            </p>
+
+            <ul class="details cols-2">
+              <li>
+                <i class="fa fa-map-marker"></i>
+                <span>{{returnedData.profile.address|title}}</span>
+              </li>
+
+              <li>
+                <i class="fa fa-search"></i>
+                <a href="#">{{returnedData.website}}</a>
+              </li>
+
+
+              <li>
+                <i class="fa fa-phone"></i>
+                <span>{{returnedData.profile.contact_no}}</span>
+              </li>
+
+              <li>
+                <i class="fa fa-envelope"></i>
+                <a href="#">{{returnedData.profile.email}}</a>
+              </li>
+
+              <li>
+                <i class="fa fa-flag"></i>
+                <span>{{returnedData.profile.nationality}}</span>
+              </li>
+
+              <li>
+                <i class="fa fa-globe"></i>
+                <span>{{returnedData.location}}</span>
+              </li>
+
+              <li>
+                <i class="fa fa-calendar"></i>
+                <span>{{returnedData.profile.dob}}</span>
+              </li>
+              <li>
+                <i class="fa fa-map-marker"></i>
+                <span>{{returnedData.profile.marital_status}}</span>
+              </li>
+            </ul>
+
+            
+          </div>
+        </div>
+
+        
+      </div>
+    </header>
+    <!-- END Page header -->
+
+
+    <!-- Main container -->
+    <main>
+
+
+      <!-- Education -->
+      <section>
+        <div class="container">
+
+          <header class="section-header">
+            <span>Latest degrees</span>
+            <h2>Education</h2>
+          </header>
+          
+          <div class="row">
+
+
+
+            <div class="col-xs-12">
+              <div class="item-block">
+                <header>
+                 
+                  <div class="hgroup">
+                    <h4> <small></small></h4>
+                    <h5></h5>
+                  </div>
+                  <h6 class="time"></h6>
+                </header>
+                <div class="item-body">
+                  <p>The Massachusetts Institute of Technology (MIT) is a private research university in Cambridge, Massachusetts. Founded in 1861 in response to the increasing industrialization of the United States, MIT adopted a European polytechnic university model and stressed laboratory instruction in applied science and engineering.</p>
+                </div>
+              </div>
+            </div>
+
+            
+
+        </div>
+      </section>
+      <!-- END Education -->
+
+
+      <!-- Work Experience -->
+      <section class="bg-alt">
+        <div class="container">
+          <header class="section-header">
+            <span>Past positions</span>
+            <h2>Work Experience</h2>
+          </header>
+          
+          <div class="row">
+
+            <!-- Work item -->
+            <div class="col-xs-12">
+              <div class="item-block">
+                <header>
+                  <img src="{{ MEDIA_URL }}assets/img/logo-google.jpg" alt="">
+                  <div class="hgroup">
+                    <h4>Google</h4>
+                    <h5>Senior front-end developer</h5>
+                  </div>
+                  <h6 class="time">Jan 2016 - Present</h6>
+                </header>
+                <div class="item-body">
+                  <p>Responsibilities:</p>
+                  <ul>
+                    <li>Developed front-end for world-class online social viewing video and chat platform using xHTML, CSS, ActionScript 2-3, Javascript, and XML.</li>
+                    <li>Developed built-in chat application into Flash video player in ActionScript 3.</li>
+                    <li>Built and developed sites for ABC Family properties such as Gilmore Girls, The Middleman, Secret Life of an American Teenager, Greek, and Kyle XY. </li>
+                    <li>Translate designs into responsive web interfaces </li>
+                    <li>Collaboration with the graphic designer on the front-end aspect of development. </li>
+                    <li>Cross-platform cross-browser development. </li>
+                    <li>Some back-end development in collaboration with senior developer.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <!-- END Work item -->
+
+
+            <!-- Work item -->
+            <div class="col-xs-12">
+              <div class="item-block">
+                <header>
+                  <img src="{{ MEDIA_URL }}assets/img/logo-facebook.png" alt="">
+                  <div class="hgroup">
+                    <h4>Facebook</h4>
+                    <h5>Interface developer</h5>
+                  </div>
+                  <h6 class="time">Aug 2014 - Jan 2016</h6>
+                </header>
+                <div class="item-body">
+                  <p>Responsibilities:</p>
+                  <ul>
+                    <li>Work as a part of a large team on a major corporate project</li>
+                    <li>Responsible for all aspects of presentation layer development including developing templates using HTML, DHTML, Javascript, XML, and XSL.</li>
+                    <li>Rapid-prototyping for usability studies and new business development.</li>
+                    <li>Collaboration with the graphic designer on the front-end aspect of development.</li>
+                    <li>Some back-end development in collaboration with senior developer.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <!-- END Work item -->
+
+
+            <!-- Work item -->
+            <div class="col-xs-12">
+              <div class="item-block">
+                <header>
+                  <img src="{{ MEDIA_URL }}assets/img/logo-envato.png" alt="">
+                  <div class="hgroup">
+                    <h4>Envato</h4>
+                    <h5>Quality assurance engineer</h5>
+                  </div>
+                  <h6 class="time">Mar 2012 - Jun 2014</h6>
+                </header>
+                <div class="item-body">
+                  <p>Responsibilities:</p>
+                  <ul>
+                    <li>Software testing in a Web Applications/Mobile environment.</li>
+                    <li>Software Test Plans from Business Requirement Specifications for test engineering group.</li>
+                    <li>Run production tests as part of software implementation; Create, deliver and support test plans for testing group to execute.</li>
+                    <li>Software testing in a Web Applications environment.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <!-- END Work item -->
+
+
+          </div>
+
+        </div>
+      </section>
+      <!-- END Work Experience -->
+
+
+      
+      <!-- END Skills -->
+
+
+    </main>
+    <!-- END Main container -->
+
+
+    <!-- Site footer -->
+    <footer class="site-footer">
+
+      <!-- Top section -->
+      
+      <!-- END Top section -->
+
+      <!-- Bottom section -->
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 col-sm-6 col-xs-12">
+            <p class="copyright-text">Copyrights &copy; 2017 All Rights Reserved by <a href="http://themeforest.net/user/shamsoft">The Human Resource Consultant</a>.</p>
+          </div>
+
+          <div class="col-md-4 col-sm-6 col-xs-12">
+            <ul class="social-icons">
+              <li><a class="facebook" href="#"><i class="fa fa-facebook"></i></a></li>
+              <li><a class="twitter" href="#"><i class="fa fa-twitter"></i></a></li>
+              <li><a class="dribbble" href="#"><i class="fa fa-dribbble"></i></a></li>
+              <li><a class="linkedin" href="#"><i class="fa fa-linkedin"></i></a></li>
+              <li><a class="instagram" href="#"><i class="fa fa-instagram"></i></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- END Bottom section -->
+
+    </footer>
+    <!-- END Site footer -->
+
+
+    <!-- Back to top button -->
+    <a id="scroll-up" href="#"><i class="ti-angle-up"></i></a>
+    <!-- END Back to top button -->
+
+
+    <!-- Contact modal -->
+    <div class="modal fade" id="modal-contact" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h5 class="modal-title" id="myModalLabel">Send message</h5>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="subject" class="control-label">Subject</label>
+                <input type="text" class="form-control" id="subject">
+              </div>
+              <div class="form-group">
+                <label for="message-text" class="control-label">Message</label>
+                <textarea class="form-control" id="message-text"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-gray" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Scripts -->
+    <script src="{{ MEDIA_URL }}assets/js/app.min.js"></script>
+    <script src="{{ MEDIA_URL }}assets/js/custom.js"></script>
+
+  </body>
+</html>

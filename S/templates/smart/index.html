@@ -1,0 +1,217 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Post a job position or create your online resume by TheJobs!">
+    <meta name="keywords" content="">
+
+    <title>TheJobs - Resume list</title>
+
+    <!-- Styles -->
+    <link href="{{ MEDIA_URL }}assets/css/app.min.css" rel="stylesheet">
+    <link href="{{ MEDIA_URL }}assets/css/custom.css" rel="stylesheet">
+
+    <!-- Fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Raleway:100,300,400,500,600,800%7COpen+Sans:300,400,500,600,700,800%7CMontserrat:400,700' rel='stylesheet' type='text/css'>
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" href="{{ MEDIA_URL }}assets/img/favicon.ico">
+  </head>
+
+  <body class="nav-on-header smart-nav bg-alt">
+
+    <!-- Navigation bar -->
+    <nav class="navbar">
+      <div class="container">
+
+        <!-- Logo -->
+        <div class="pull-left">
+          <a class="navbar-toggle" href="#" data-toggle="offcanvas"><i class="ti-menu"></i></a>
+
+          <div class="logo-wrapper">
+            <a class="logo" href="index.html"><img src="{{ MEDIA_URL }}assets/img/logo.png" alt="logo"></a>
+            <a class="logo-alt" href="index.html"><img src="{{ MEDIA_URL }}assets/img/logo-alt.png" alt="logo-alt"></a>
+          </div>
+
+        </div>
+        <!-- END Logo -->
+
+        <!-- User account -->
+        
+        <!-- END User account -->
+
+        <!-- Navigation menu -->
+        <ul class="nav-menu">
+          <li>
+            <a class="active" href="{% url 'index' %}">Home</a>
+            
+          </li>
+          <li>
+            <a href="{% url 'parsed' %}">Parse Resume</a>
+            
+          </li>
+          <li>
+            <a href="{% url 'parsed_result' %}">Parsed Results</a>
+            
+          </li>
+          <li>
+            <a href="#">Company</a>
+            
+          </li>
+          <li>
+            <a href="#">About</a>
+            
+          </li>
+        </ul>
+        <!-- END Navigation menu -->
+
+      </div>
+    </nav>
+    <!-- END Navigation bar -->
+
+
+    <!-- Page header -->
+    <header class="page-header bg-img" style="background-image: url({{ MEDIA_URL }}assets/img/bg-banner1.jpg);">
+      <div class="container page-name">
+        <h1 class="text-center">Browse resumes</h1>
+        <p class="lead text-center">Use following search box to find resumes that fits your position better</p>
+      </div>
+
+      <div class="container">
+		<form class="" method="get" action="{% url 'results' %}" enctype="multipart/form-data">
+
+          <div class="row">
+            <div class="form-group col-xs-12 col-sm-4">
+              <input name="name" id="id_name" type="text" class="form-control" placeholder="Name" />
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-4">
+                  <input name="education" id="id_education" type="text" class="form-control" placeholder="Education" />
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-4">
+                  <input name="experience" id="id_experience" type="text" class="form-control" placeholder="Experience" />
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-4">
+                  <input name="skills" id="id_skills" type="text" class="form-control" placeholder="Skills" />
+            </div>
+
+			<div class="form-group col-xs-12 col-sm-4">
+                  <input name="contact" id="id_contact" type="text" class="form-control" placeholder="Contact No." />
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-4">
+                  <input name="address" id="id_address" type="text" class="form-control" placeholder="Address" />
+            </div>
+
+            <div class="form-group col-xs-12 col-sm-4">
+              <select class="form-control selectpicker"  name="category">
+                <option selected >All categories</option>
+                <option value="developer">Developer</option>
+                <option value="designer">Designer</option>
+                <option value="customer_service">Customer service</option>
+                <option value="finance">Finance</option>
+                <option value="healthcare">Healthcare</option>
+                <option value="sale">Sale</option>
+                <option value="marketing">Marketing</option>
+                <option value="information_technology">Information technology</option>
+                <option value="others">Others</option>
+              </select>
+            </div>
+
+
+            
+
+            
+
+
+            <div class="form-group col-xs-12 col-sm-4">
+              <h6>Sort by</h6>
+              <div class="radio">
+                <input type="radio" name="sortby" id="sortby1" value="0" checked>
+                <label for="sortby1">Relevance</label>
+              </div>
+
+              <div class="radio">
+                <input type="radio" name="sortby" id="sortby2" value="-1">
+                <label for="sortby2">Highest rate first</label>
+              </div>
+
+              <div class="radio">
+                <input type="radio" name="sortby" id="sortby3" value="1">
+                <label for="sortby3">Lowest rate first</label>
+              </div>
+
+              
+
+            </div>
+
+
+          </div>
+
+          <div class="button-group">
+            <div class="action-buttons">
+              <button class="btn btn-primary">Apply filter</button>
+            </div>
+          </div>
+
+        </form>
+
+      </div>
+
+    </header>
+    <!-- END Page header -->
+
+
+    <!-- Main container -->
+    
+    <!-- END Main container -->
+
+
+   <footer class="site-footer">
+
+      <!-- Top section -->
+      
+      <!-- END Top section -->
+
+      <!-- Bottom section -->
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 col-sm-6 col-xs-12">
+            <p class="copyright-text">Copyrights &copy; 2017 All Rights Reserved by <a href="#">The Human Resource Consultants</a>.</p>
+          </div>
+
+          <div class="col-md-4 col-sm-6 col-xs-12">
+            <ul class="social-icons">
+              <li><a class="facebook" href="#"><i class="fa fa-facebook"></i></a></li>
+              <li><a class="twitter" href="#"><i class="fa fa-twitter"></i></a></li>
+              <li><a class="dribbble" href="#"><i class="fa fa-dribbble"></i></a></li>
+              <li><a class="linkedin" href="#"><i class="fa fa-linkedin"></i></a></li>
+              <li><a class="instagram" href="#"><i class="fa fa-instagram"></i></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- END Bottom section -->
+
+    </footer>
+    <!-- END Site footer -->
+
+
+    <!-- Back to top button -->
+    <a id="scroll-up" href="#"><i class="ti-angle-up"></i></a>
+    <!-- END Back to top button -->
+
+    <!-- Scripts -->
+    <script src="{{ MEDIA_URL }}assets/js/app.min.js"></script>
+    <script src="{{ MEDIA_URL }}assets/vendors/summernote/summernote.min.js"></script>
+    <script src="{{ MEDIA_URL }}assets/js/custom.js"></script>
+
+  </body>
+</html>

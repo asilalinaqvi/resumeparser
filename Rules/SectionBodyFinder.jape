@@ -1,0 +1,52 @@
+Imports: {
+import static gate.Utils.*;
+}
+
+Phase: SectionBodyFinder
+Input: Lookup SectionHeadingFinder 
+Options: control = appelt debug = false
+
+Rule: SectionBodyrule
+(
+ ({SectionHeadingFinder})
+ )
+:sectionOrExp
+ -->
+:sectionOrExp{
+		long lastAnnOffset = Long.parseLong(doc.getFeatures().get("lastSectionWorkExOffSet").toString(),10);
+
+	for(Annotation t : sectionOrExpAnnots){
+
+		if(doc.getFeatures().containsKey("Section") ){
+		Node EndNode=(Node)doc.getFeatures().get("Section");
+		String heading=doc.getFeatures().get("Heading").toString();
+		FeatureMap featured=(FeatureMap)doc.getFeatures().get("Features");
+		outputAS.add(EndNode,t.getStartNode(),heading,featured);
+
+		}
+		
+		doc.getFeatures().put("Section",t.getEndNode());
+		doc.getFeatures().put("Heading",t.getFeatures().get("minorType").toString());
+		t.getFeatures().put("Title",stringFor(doc,t));
+
+
+
+		FeatureMap feature=Factory.newFeatureMap();
+		feature.putAll(t.getFeatures());
+		doc.getFeatures().put("Features",feature);
+
+		if(t.getStartNode().getOffset() == lastAnnOffset){
+				long docEnd = end(doc);
+				FeatureMap featured=(FeatureMap)doc.getFeatures().get("Features");
+				String heading=doc.getFeatures().get("Heading").toString();
+				try{
+				outputAS.add(t.getEndNode().getOffset(),docEnd-1,heading,featured);
+}catch(InvalidOffsetException e){
+		}
+		
+
+		
+		}
+	}
+
+}

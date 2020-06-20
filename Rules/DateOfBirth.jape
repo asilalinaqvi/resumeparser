@@ -1,0 +1,59 @@
+Imports: {
+import static gate.Utils.*;
+}
+Phase: DateOfBirth
+Input: Token Lookup Date
+Options: control = appelt debug = false
+MACRO:DOB
+(({Token.string == "Date"}{Token.string == "of"}{Token.string == "birth"})|
+({Token.string == "Date"}{Token.string == "of"}{Token.string == "Birth"})|
+({Token.string == "Date"}{Token.string == "Of"}{Token.string == "Birth"})|
+({Token.string == "Date"}{Token.string == "Of"}{Token.string == "birth"})
+|({Token.string == "DOB"})
+|({Token.string == "D"}{Token.string == "."}{Token.string == "O"}{Token.string == "."}{Token.string == "B"})
+|({Token.string == "D"}{Token.string == "."}{Token.string == "O"}{Token.string == "."}{Token.string == "B"}{Token.string == "."})
+)
+MACRO: CONJUNCTION(
+ ({Token.kind==punctuation}|{Token.category==CC}|{Token.category==IN}|{Token.category==TO})*
+)
+MACRO: DATE(
+({Date} (CONJUNCTION) (({Date})? | ({Token.string == "present"})? | ({Token.string == "Progress"})?))
+)
+Rule: BirthDate
+(
+(DOB) (CONJUNCTION) DATE
+)
+:DOB
+-->
+:DOB{
+FeatureMap features=Factory.newFeatureMap();
+String text="";
+String texts="";
+AnnotationSet ProfileSection = inputAS.get("ProfileSection");
+AnnotationSet ProfileSection2 = inputAS.get("profile_section");
+
+
+
+
+if(ProfileSection2.size() > 0){
+  ProfileSection=ProfileSection2;
+}
+
+
+ 
+if(DOBAnnots.firstNode().getOffset()>=ProfileSection.firstNode().getOffset() && DOBAnnots.lastNode().getOffset()<=ProfileSection.lastNode().getOffset()){
+  for(Annotation set : DOBAnnots.inDocumentOrder()){
+	if(set.getType()=="Date"){
+		
+	 		features.put("DOB",stringFor(doc,set));
+	 	}
+	 	}
+    outputAS.add(DOBAnnots.firstNode(),DOBAnnots.lastNode(),"DOB",features);
+
+    }
+    
+  
+
+
+
+}

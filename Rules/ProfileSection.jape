@@ -1,0 +1,10 @@
+Phase: ProfileSection
+Input: Sentence profile_section
+Options: control = once debug = true
+
+Rule: MarkProfileSection
+(
+(({Sentence})[10])
+):profileSection
+-->
+:profileSection.ProfileSection = {}
